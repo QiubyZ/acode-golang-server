@@ -1,5 +1,4 @@
 import plugin from "../plugin.json";
-
 let AppSettings = acode.require("settings");
 class AcodePlugin {
   async init() {
@@ -7,7 +6,6 @@ class AcodePlugin {
     let acodeLanguageClient = acode.require("acode-language-client");
 
     if (acodeLanguageClient) {
-
       await this.setupLanguageClient(acodeLanguageClient);
     } else {
       window.addEventListener("plugin.install", ({ detail }) => {
@@ -44,7 +42,7 @@ class AcodePlugin {
           index: 1,
           key: "arguments",
           promptType: "text",
-          info:"For multiple arguments, please use comma ','\r\nExample: --stdio, -v, -vv",
+          info: "For multiple arguments, please use comma ','\r\nExample: --stdio, -v, -vv",
           prompt: "Argument Of Language Server",
           text: "Argument",
           value: this.settings.arguments.join(", ")
@@ -52,9 +50,13 @@ class AcodePlugin {
       ],
 
       cb: (key, value) => {
-        switch(key){
+        switch (key) {
           case 'arguments':
-            value = value.split(",").map(item => item.trim());
+            if (!value) {
+              value = value.split(",").map(item => item.trim());
+            } else {
+              value = []
+            }
             break;
         }
         AppSettings.value[plugin.id][key] = value;
@@ -62,11 +64,11 @@ class AcodePlugin {
       },
     };
   }
-  
+
   get defaultSettings() {
     return {
       serverPath: "gopls",
-      arguments: ["-v","serve"],
+      arguments: ["-v", "serve"],
       languageClientConfig: {}
     };
   }
@@ -80,19 +82,19 @@ class AcodePlugin {
       type: "socket",
       socket,
     });
-  
+
     acodeLanguageClient.registerService(
-      "golang|go",
+      "golang",
       golangClient,
       this.settings.languageClientConfig
     );
-    acode.registerFormatter(plugin.name, ["golang", "go"], () =>
+    acode.registerFormatter(plugin.name, ["go"], () =>
       acodeLanguageClient.format(),
     );
   }
 
   async destroy() {
-    if(AppSettings.value[plugin.id]){
+    if (AppSettings.value[plugin.id]) {
       delete AppSettings.value[plugin.id];
       AppSettings.update();
     }
