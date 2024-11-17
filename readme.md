@@ -6,6 +6,10 @@
 
   <a href="https://trakteer.id/qiubyzhukhi/tip" target="_blank"><img id="wse-buttons-preview" src="https://cdn.trakteer.id/images/embed/trbtn-red-1.png?date=18-11-2023" height="40" style="border:0px;height:40px;" alt="Trakteer Saya"></a>
 
+## Acode Plugin Requiriment Installed
+  1. [Acode Language Client](https://acode.app/plugin/acode.language.client) 
+  2. Follow the instructions there to run the Language Server.
+
 ## Golang Setup
   Install gopls for Golang Language Server in your terminal with
   ```bash
@@ -15,11 +19,10 @@
 ## Info
   If you experience something like the picture below
   
-  ![Preview](/Screenshot_2024-11-09-02-12-26-321_com.foxdebug.acode-edit.jpg)
+  ![Preview](https://raw.githubusercontent.com/QiubyZ/acode-golang-server/refs/heads/main/Screenshot_2024-11-09-02-12-26-321_com.foxdebug.acode-edit.jpg)
   
   it is a problem with **Plugin Language Client (v1.0.4)** , replace your Plugin Language Client (v1.0.4)
-  you must intalling this [Acode Modif](https://github.com/QiubyZ/acode-language-client/releases/tag/v1)
+  you must intalling this [Acode Language Client Modif](https://github.com/QiubyZ/acode-language-client/releases/tag/v1)
   
   Download **dist.zip** and [clik here](https://acode-plugin-docs.vercel.app/docs/getting-started/intro#installing-acode-plugins) how to install plugins externally. 
-  
   
