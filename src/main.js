@@ -42,9 +42,9 @@ class AcodePlugin {
           index: 1,
           key: "arguments",
           promptType: "text",
-          info: "For multiple arguments, please use comma ','\r\nExample: --stdio, -v, -vv",
+          info: "For multiple arguments, please use comma ','<br>Example: --stdio, -v, -vv",
           prompt: "Argument Of Language Server",
-          text: "Argument",
+          text: "Golang Argument",
           value: this.settings.arguments.join(", ")
         },
       ],
@@ -52,11 +52,7 @@ class AcodePlugin {
       cb: (key, value) => {
         switch (key) {
           case 'arguments':
-            if (!value) {
-              value = value.split(",").map(item => item.trim());
-            } else {
-              value = []
-            }
+            value = value ? value.split(",").map(item => item.trim()) : [];
             break;
         }
         AppSettings.value[plugin.id][key] = value;
