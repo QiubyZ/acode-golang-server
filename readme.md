@@ -26,3 +26,6 @@
   
   Download **dist.zip** and [clik here](https://acode-plugin-docs.vercel.app/docs/getting-started/intro#installing-acode-plugins) how to install plugins externally. 
   
+## are you a new user?
+  you can watch my video to install Acode for the first time 
+  [click here](https://youtu.be/Rc-jvCWHG9E?si=TEoo4G2-4_cLm6EX)

@@ -1,10 +1,31 @@
 import plugin from "../plugin.json";
 let AppSettings = acode.require("settings");
+
 class AcodePlugin {
-  async init() {
+  constructor() {
+    this.name_language_type = "golang"
+    this.languageserver = "gopls"
+    this.standart_args = ["-v", "serve"]
+    this.initializeOptions = {
+      initializationOptions: {
+        usePlaceholders: true,
+        completeUnimported: true,
+        hints: {
+          assignVariableTypes: true,
+          compositeLiteralFields: true,
+          compositeLiteralTypes: true,
+          constantValues: true,
+          functionTypeParameters: true,
+          parameterNames: true,
+          rangeVariableTypes: true
+        }
+      }
+    }
+  }
 
+  async init($page, cacheFile, cacheFileUrl) {
+    this.$page = $page
     let acodeLanguageClient = acode.require("acode-language-client");
-
     if (acodeLanguageClient) {
       await this.setupLanguageClient(acodeLanguageClient);
     } else {
@@ -63,10 +84,35 @@ class AcodePlugin {
 
   get defaultSettings() {
     return {
-      serverPath: "gopls",
-      arguments: ["-v", "serve"],
-      languageClientConfig: {}
+      serverPath: this.languageserver,
+      arguments: this.standart_args,
+      languageClientConfig: this.initializeOptions
     };
+  }
+
+  setServerInfo() {
+    let node = document.querySelector(".server-info");
+    if (node.textContent.includes("gopls") || node.textContent.startsWith("gopls")) {
+      try {
+        const jsonData = JSON.parse(
+          node.textContent.slice(
+            node.textContent.indexOf('{'),
+            node.textContent.lastIndexOf('}') + 1
+          )
+        );
+        console.log("Debug Version:", jsonData.GoVersion);
+        node.innerHTML = jsonData.GoVersion
+
+      } catch (error) {
+        console.error(`Error parsing JSON ${plugin.id} | ${this.languageserver}:`, error);
+        console.log("Raw Data: " + node.textContent);
+      }
+    }
+  }
+
+  setLanguageClientserverInfo() {
+    editorManager.on("switch-file", async () => this.setServerInfo());
+
   }
 
   async setupLanguageClient(acodeLanguageClient) {
@@ -74,19 +120,43 @@ class AcodePlugin {
       this.settings.serverPath,
       this.settings.arguments,
     );
+
+
     let golangClient = new acodeLanguageClient.LanguageClient({
       type: "socket",
       socket,
+      initializationOptions: this.settings.languageClientConfig.initializationOptions
+    });
+    acodeLanguageClient.registerService(this.name_language_type, golangClient);
+
+
+    let handler = () => {
+      golangClient.connection.onNotification("window/showMessage", ({ params }) => {
+        console.log("ShowMessage: " + params.message)
+      });
+      golangClient.connection.onNotification("workspace/configuration", params => {
+        const deb = "Initilizing Progress " + this.languageserver
+        console.log(deb + `${params.message}`)
+        this.setServerInfo()
+      });
+      golangClient.connection.onRequest("window/workDoneProgress/create", params => {
+        const deb = "Initializing WorkDone Progress " + this.languageserver
+        console.log(deb + `${params.message}`)
+        this.setServerInfo()
+      });
+    }
+    socket.addEventListener("open", () => {
+      if (golangClient.isInitialized) handler();
+      else golangClient.requestsQueue.push(() => handler());
+      console.log("OPEN CONNECTION")
     });
 
-    acodeLanguageClient.registerService(
-      "golang",
-      golangClient,
-      this.settings.languageClientConfig
-    );
+
+
     acode.registerFormatter(plugin.name, ["go"], () =>
       acodeLanguageClient.format(),
     );
+    this.setLanguageClientserverInfo()
   }
 
   async destroy() {
@@ -98,7 +168,6 @@ class AcodePlugin {
 }
 
 if (window.acode) {
-
   const acodePlugin = new AcodePlugin();
   acode.setPluginInit(
     plugin.id,
