@@ -9,6 +9,8 @@
 ## Acode Plugin Requiriment Installed
   1. [Acode Language Client](https://acode.app/plugin/acode.language.client) 
   2. Follow the instructions there to run the Language Server.
+  3. you can watch my video to install *Acode Language Client* [Click Here](https://youtu.be/Rc-jvCWHG9E?si=VuY0VCMD2jnn3ptE), 
+     Preview Golang Plugin of [Click Here](https://youtube.com/shorts/lAw5leI56_k?si=zuLsUpkXfSksg6ja).
 
 ## Golang Setup
   Install gopls for Golang Language Server in your terminal with
@@ -26,6 +28,9 @@
   
   Download **dist.zip** and [clik here](https://acode-plugin-docs.vercel.app/docs/getting-started/intro#installing-acode-plugins) how to install plugins externally. 
   
-## are you a new user?
-  you can watch my video to install Acode for the first time 
-  [click here](https://youtu.be/Rc-jvCWHG9E?si=TEoo4G2-4_cLm6EX)
+  
+# Tutorial Bonus
+## How To Run Gradle Project with CodeRunner?
+  This is a video tutorial reference on how to run a Gradle Project.
+  [Click Here](https://youtube.com/shorts/tc4U8FwaEnA?si=5OUDtd8OavP3rf1K)
+  

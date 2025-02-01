@@ -92,6 +92,9 @@ class AcodePlugin {
 
   setServerInfo() {
     let node = document.querySelector(".server-info");
+    if(!node.textContent || node.textContent == null){
+      return
+    }
     if (node.textContent.includes("gopls") || node.textContent.startsWith("gopls")) {
       try {
         const jsonData = JSON.parse(
@@ -112,7 +115,6 @@ class AcodePlugin {
 
   setLanguageClientserverInfo() {
     editorManager.on("switch-file", async () => this.setServerInfo());
-
   }
 
   async setupLanguageClient(acodeLanguageClient) {
@@ -148,7 +150,8 @@ class AcodePlugin {
     socket.addEventListener("open", () => {
       if (golangClient.isInitialized) handler();
       else golangClient.requestsQueue.push(() => handler());
-      console.log("OPEN CONNECTION")
+      console.log(`OPEN CONNECTION ${this.languageserver}`)
+
     });
 
 
@@ -157,6 +160,9 @@ class AcodePlugin {
       acodeLanguageClient.format(),
     );
     this.setLanguageClientserverInfo()
+  }
+  infoUI(pesan) {
+    window.toast(pesan, 2000)
   }
 
   async destroy() {
