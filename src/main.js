@@ -2,7 +2,9 @@ import plugin from "../plugin.json";
 let AppSettings = acode.require("settings");
 
 class AcodePlugin {
+  //TestAcodeGithub
   constructor() {
+
     this.name_language_type = "golang"
     this.languageserver = "gopls"
     this.standart_args = ["-v", "serve"]
@@ -92,7 +94,7 @@ class AcodePlugin {
 
   setServerInfo() {
     let node = document.querySelector(".server-info");
-    if(!node.textContent || node.textContent == null){
+    if (!node.textContent || node.textContent == null) {
       return
     }
     if (node.textContent.includes("gopls") || node.textContent.startsWith("gopls")) {
