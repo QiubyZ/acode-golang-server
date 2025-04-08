@@ -1,17 +1,18 @@
 {
-  "id": "acode.golang.server",
-  "name": "Golang Language Server (gopls)",
-  "main": "dist/main.js",
-  "version": "1.0.5",
-  "readme": "readme.md",
-  "icon": "icon.png",
-  "files": [],
-  "minVersionCode": 290,
-  "price": 0,
-  "author": {
-    "name": "Qiuby Zhukhi",
-    "email": "qzhukhi@gmail.com",
-    "github": "QiubyZ",
-    "website": "https://www.facebook.com/QiubyZhuk"
-  }
+	"id": "acode.golang.server",
+	"name": "Golang Language Server (gopls)",
+	"main": "dist/main.js",
+	"version": "1.0.6",
+	"readme": "readme.md",
+	"icon": "icon.png",
+	"files": [],
+	"keywords":["go", "gopls", "go language server", "golang"],
+	"minVersionCode": 290,
+	"price": 0,
+	"author": {
+		"name": "Qiuby Zhukhi",
+		"email": "qzhukhi@gmail.com",
+		"github": "QiubyZ",
+		"website": "https://www.facebook.com/QiubyZhuk"
+	}
 }
