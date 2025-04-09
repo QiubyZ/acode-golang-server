@@ -2,6 +2,8 @@ import plugin from "../plugin.json";
 let AppSettings = acode.require("settings");
 
 class AcodePlugin {
+	// Flag global untuk melacak status pemrosesan
+
 	constructor() {
 		this.name_language_type = "golang";
 		this.languageserver = "gopls";
@@ -152,17 +154,19 @@ class AcodePlugin {
 
 		acode.registerFormatter(plugin.name, ["go"], () => acodeLanguageClient.format());
 		this.setLanguageClientserverInfo();
-		this.resolvedEditor()
+		this.resolvedEditor();
 	}
+
 	resolvedEditor() {
-		window.applyEditToEditor = this.#applyEditToEditor.bind(this);
-		console.log = function (...args) {
+		const originalConsoleLog = console.log;
+		console.log = (...args) => {
+			originalConsoleLog.apply(console, args);
 			if (args[0] === "Resolved:") {
 				const resolvedResult = args[1]; // Hasil resolved
 				//console.log("Test Organize Imports:", resolvedResult);
 
 				if (resolvedResult && resolvedResult.edit) {
-					window.applyEditToEditor(resolvedResult.edit);
+					this.applyText(resolvedResult.edit);
 				} else {
 					console.error(
 						"Resolved result tidak memiliki properti 'edit':",
@@ -173,26 +177,15 @@ class AcodePlugin {
 		};
 	}
 
-	#applyEditToEditor(edit) {
+	applyText(edit) {
 		const session = editorManager.editor.getSession();
 		edit.documentChanges.forEach((documentChange) => {
 			const uri = documentChange.textDocument.uri; // URI file
 			const changes = documentChange.edits;
-
-			//console.log(`Menerapkan perubahan untuk file: ${uri}`);
-
 			changes.forEach((change) => {
 				const { range, newText } = change;
-
 				const startPos = { row: range.start.line, column: range.start.character };
 				const endPos = { row: range.end.line, column: range.end.character };
-
-				// console.log(
-				// 	`Mengganti teks dari posisi ${JSON.stringify(startPos)} ke ${JSON.stringify(
-				// 		endPos,
-				// 	)} dengan: "${newText}"`,
-				// );
-
 				session.replace(
 					{
 						start: startPos,
