@@ -131,70 +131,8 @@ class AcodePlugin {
 		});
 		acodeLanguageClient.registerService(this.name_language_type, golangClient);
 
-		let handler = () => {
-			golangClient.connection.onNotification("window/showMessage", ({ params }) => {
-				console.log("ShowMessage: " + params.message);
-			});
-			golangClient.connection.onNotification("workspace/configuration", (params) => {
-				const deb = "Initilizing Progress " + this.languageserver;
-				console.log(deb + `${params.message}`);
-				this.setServerInfo();
-			});
-			golangClient.connection.onRequest("window/workDoneProgress/create", (params) => {
-				const deb = "Initializing WorkDone Progress " + this.languageserver;
-				console.log(deb + `${params.message}`);
-				this.setServerInfo();
-			});
-		};
-		socket.addEventListener("open", () => {
-			if (golangClient.isInitialized) handler();
-			else golangClient.requestsQueue.push(() => handler());
-			console.log(`OPEN CONNECTION ${this.languageserver}`);
-		});
-
 		acode.registerFormatter(plugin.name, ["go"], () => acodeLanguageClient.format());
 		this.setLanguageClientserverInfo();
-		this.resolvedEditor();
-	}
-
-	resolvedEditor() {
-		const originalConsoleLog = console.log;
-		console.log = (...args) => {
-			originalConsoleLog.apply(console, args);
-			if (args[0] === "Resolved:") {
-				const resolvedResult = args[1]; // Hasil resolved
-				//console.log("Test Organize Imports:", resolvedResult);
-
-				if (resolvedResult && resolvedResult.edit) {
-					this.applyText(resolvedResult.edit);
-				} else {
-					console.error(
-						"Resolved result tidak memiliki properti 'edit':",
-						resolvedResult,
-					);
-				}
-			}
-		};
-	}
-
-	applyText(edit) {
-		const session = editorManager.editor.getSession();
-		edit.documentChanges.forEach((documentChange) => {
-			const uri = documentChange.textDocument.uri; // URI file
-			const changes = documentChange.edits;
-			changes.forEach((change) => {
-				const { range, newText } = change;
-				const startPos = { row: range.start.line, column: range.start.character };
-				const endPos = { row: range.end.line, column: range.end.character };
-				session.replace(
-					{
-						start: startPos,
-						end: endPos,
-					},
-					newText,
-				);
-			});
-		});
 	}
 	infoUI(pesan) {
 		window.toast(pesan, 2000);

@@ -2,11 +2,11 @@
 	"id": "acode.golang.server",
 	"name": "Golang Language Server (gopls)",
 	"main": "dist/main.js",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"readme": "readme.md",
 	"icon": "icon.png",
 	"files": [],
-	"keywords":["go", "gopls", "go language server", "golang"],
+	"keywords": ["go", "gopls", "go language server", "golang"],
 	"minVersionCode": 290,
 	"price": 0,
 	"author": {
