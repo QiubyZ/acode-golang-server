@@ -1,5 +1,4 @@
-package main
-
+package projectgolang
 
 func main() {
 	fmt.Print("a ...any")

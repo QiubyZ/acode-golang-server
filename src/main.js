@@ -92,52 +92,75 @@ class AcodePlugin {
 		};
 	}
 
-	setServerInfo() {
-		let node = document.querySelector(".server-info");
-		if (!node.textContent || node.textContent === null) {
-			return;
-		}
-		if (node.textContent.includes("gopls") || node.textContent.startsWith("gopls")) {
-			try {
-				const jsonData = JSON.parse(
-					node.textContent.slice(
-						node.textContent.indexOf("{"),
-						node.textContent.lastIndexOf("}") + 1,
-					),
-				);
-				console.log("Debug Version:", jsonData.GoVersion);
-				node.innerHTML = jsonData.GoVersion;
-			} catch (error) {
-				console.error(`Error parsing JSON ${plugin.id} | ${this.languageserver}:`, error);
-				console.log("Raw Data: " + node.textContent);
+	// Fungsi untuk memformat ulang konten server-info
+	formatServerInfo(node) {
+		try {
+			// Pastikan konten elemen berisi teks yang sesuai
+			if (!node.textContent || !node.textContent.includes("gopls")) {
+				return;
 			}
+
+			// Parsing JSON dari konten elemen
+			const jsonData = JSON.parse(
+				node.textContent.slice(
+					node.textContent.indexOf("{"),
+					node.textContent.lastIndexOf("}") + 1,
+				),
+			);
+
+			// Ekstrak versi Go
+			const goVersion = jsonData.GoVersion || "Unknown";
+
+			// Perbarui konten elemen dengan versi Go saja
+			node.innerHTML = `Go Version: ${goVersion}`;
+		} catch (error) {
+			console.error("Error parsing JSON:", error);
+			console.log("Raw Data:", node.textContent);
 		}
 	}
-
-	setLanguageClientserverInfo() {
-		editorManager.on("switch-file", async () => this.setServerInfo());
-	}
-
 	async setupLanguageClient(acodeLanguageClient) {
 		let socket = acodeLanguageClient.getSocketForCommand(
 			this.settings.serverPath,
 			this.settings.arguments,
 		);
-
 		let golangClient = new acodeLanguageClient.LanguageClient({
 			type: "socket",
 			socket,
 			initializationOptions: this.settings.languageClientConfig.initializationOptions,
 		});
 		acodeLanguageClient.registerService(this.name_language_type, golangClient);
-
 		acode.registerFormatter(plugin.name, ["go"], () => acodeLanguageClient.format());
-		this.setLanguageClientserverInfo();
+		this.disablePopUp();
+	}
+	disablePopUp() {
+		const serverInfoElement = document.querySelector(".server-info");
+		if (serverInfoElement) {
+			const observer = new MutationObserver((mutationsList) => {
+				for (const mutation of mutationsList) {
+					if (mutation.type === "characterData" || mutation.type === "childList") {
+						//console.log("Perubahan terdeteksi pada server-info.");
+						this.formatServerInfo(serverInfoElement);
+					}
+				}
+			});
+			const config = {
+				childList: true,
+				characterData: true,
+				subtree: false,
+			};
+			observer.observe(serverInfoElement, config);
+			this.formatServerInfo(serverInfoElement);
+		}
 	}
 	infoUI(pesan) {
 		window.toast(pesan, 2000);
 	}
-
+	createLSPMessage(message) {
+		const json = JSON.stringify(message);
+		const contentLength = json.length;
+		const header = `Content-Length: ${contentLength}\r\nContent-Type: application/vscode-jsonrpc; charset=utf-8\r\n\r\n`;
+		return header + json;
+	}
 	async destroy() {
 		if (AppSettings.value[plugin.id]) {
 			delete AppSettings.value[plugin.id];
